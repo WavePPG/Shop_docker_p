@@ -8,7 +8,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .card-img-top {
-            height: 200px;
+            height: 150px; /* ปรับขนาดรูปภาพให้เล็กลง */
             object-fit: cover;
         }
         .card-body {
@@ -23,85 +23,88 @@
     <?php include('navbar_edit_delete.php')?>
 </nav>
 <div class="container mt-5">
-    <div class="row">
-        <?php 
-        include('../server.php'); 
-        include('update_product.php');
-        // Fetch and display data from the product table
-        $sql_select = "SELECT * FROM product";
-        $result_select = mysqli_query($conn, $sql_select);
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                include('../server.php'); 
+                include('update_product.php');
+                // Fetch and display data from the product table
+                $sql_select = "SELECT * FROM product";
+                $result_select = mysqli_query($conn, $sql_select);
 
-        if (mysqli_num_rows($result_select) > 0) {
-            $count = 0;
-            while($row = mysqli_fetch_assoc($result_select)) {
-                if ($count % 4 == 0 && $count != 0) {
-                    echo "</div><div class='row mt-4'>";
+                if (mysqli_num_rows($result_select) > 0) {
+                    while($row = mysqli_fetch_assoc($result_select)) {
+                        echo "<tr id='product{$row['id']}'>
+                                <td><img src='../image/{$row['image']}' class='card-img-top' alt='{$row['pro_name']}'></td>
+                                <td>{$row['pro_name']}</td>
+                                <td>{$row['pro_description']}</td>
+                                <td>{$row['price']}</td>
+                                <td>{$row['amount']}</td>
+                                <td>
+                                    <button class='btn btn-primary' data-toggle='modal' data-target='#editModal{$row['id']}'>Edit</button>
+                                    <button class='btn btn-danger' onclick='deleteProduct({$row['id']})'>Delete</button>
+                                </td>
+                              </tr>";
+
+                        // Edit Modal
+                        echo "<div class='modal fade' id='editModal{$row['id']}' tabindex='-1' aria-labelledby='editModalLabel{$row['id']}' aria-hidden='true'>
+                                <div class='modal-dialog'>
+                                    <div class='modal-content'>
+                                        <div class='modal-header'>
+                                            <h5 class='modal-title' id='editModalLabel{$row['id']}'>Edit Product</h5>
+                                            <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                                                <span aria-hidden='true'>&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class='modal-body'>
+                                            <form action='update_product.php' method='POST' enctype='multipart/form-data'>
+                                                <input type='hidden' name='id' value='{$row['id']}'>
+                                                <div class='form-group'>
+                                                    <label for='pro_name'>Product Name</label>
+                                                    <input type='text' class='form-control' id='pro_name' name='pro_name' value='{$row['pro_name']}' required>
+                                                </div>
+                                                <div class='form-group'>
+                                                    <label for='pro_description'>Description</label>
+                                                    <input type='text' class='form-control' id='pro_description' name='pro_description' value='{$row['pro_description']}' required>
+                                                </div>
+                                                <div class='form-group'>
+                                                    <label for='price'>Price</label>
+                                                    <input type='number' class='form-control' id='price' name='price' value='{$row['price']}' required>
+                                                </div>
+                                                <div class='form-group'>
+                                                    <label for='amount'>Amount</label>
+                                                    <input type='number' class='form-control' id='amount' name='amount' value='{$row['amount']}' required>
+                                                </div>
+                                                <div class='form-group'>
+                                                    <label for='image'>Product Image</label>
+                                                    <input type='file' class='form-control-file' id='image' name='image'>
+                                                </div>
+                                                <button type='submit' id='saveChangesBtn' class='btn btn-primary'>Save changes</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>";
+                    }
+                } else {
+                    echo "<tr><td colspan='6'>No product found.</td></tr>";
                 }
-                // Add ID to each product card
-                echo "<div class='col-md-3 mb-4' id='product{$row['id']}'>
-                        <div class='card'>
-                            <img src='../image/{$row['image']}' class='card-img-top' alt='{$row['pro_name']}'>
-                            <div class='card-body'>
-                                <h5 class='card-title'>{$row['pro_name']}</h5>
-                                <p class='card-text'>
-                                    Description: {$row['pro_description']}<br>
-                                    Price: {$row['price']}<br>
-                                    Amount: {$row['amount']}
-                                </p>
-                                <button class='btn btn-primary' data-toggle='modal' data-target='#editModal{$row['id']}'>Edit</button>
-                                <button class='btn btn-danger' onclick='deleteProduct({$row['id']})'>Delete</button>
-                            </div>
-                        </div>
-                      </div>";
 
-                // Edit Modal
-                echo "<div class='modal fade' id='editModal{$row['id']}' tabindex='-1' aria-labelledby='editModalLabel{$row['id']}' aria-hidden='true'>
-                        <div class='modal-dialog'>
-                            <div class='modal-content'>
-                                <div class='modal-header'>
-                                    <h5 class='modal-title' id='editModalLabel{$row['id']}'>Edit Product</h5>
-                                    <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
-                                        <span aria-hidden='true'>&times;</span>
-                                    </button>
-                                </div>
-                                <div class='modal-body'>
-                                    <form action='update_product.php' method='POST' enctype='multipart/form-data'>
-                                        <input type='hidden' name='id' value='{$row['id']}'>
-                                        <div class='form-group'>
-                                            <label for='pro_name'>Product Name</label>
-                                            <input type='text' class='form-control' id='pro_name' name='pro_name' value='{$row['pro_name']}' required>
-                                        </div>
-                                        <div class='form-group'>
-                                            <label for='pro_description'>Description</label>
-                                            <input type='text' class='form-control' id='pro_description' name='pro_description' value='{$row['pro_description']}' required>
-                                        </div>
-                                        <div class='form-group'>
-                                            <label for='price'>Price</label>
-                                            <input type='number' class='form-control' id='price' name='price' value='{$row['price']}' required>
-                                        </div>
-                                        <div class='form-group'>
-                                            <label for='amount'>Amount</label>
-                                            <input type='number' class='form-control' id='amount' name='amount' value='{$row['amount']}' required>
-                                        </div>
-                                        <div class='form-group'>
-                                            <label for='image'>Product Image</label>
-                                            <input type='file' class='form-control-file' id='image' name='image'>
-                                        </div>
-                                        <button type='submit' id='saveChangesBtn' class='btn btn-primary'>Save changes</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                      </div>";
-                $count++;
-            }
-            echo "</div>";
-        } else {
-            echo "<p>No product found.</p>";
-        }
-
-        mysqli_close($conn);
-        ?>
+                mysqli_close($conn);
+                ?>
+            </tbody>
+        </table>
     </div>
 </div>
 
