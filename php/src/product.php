@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="./css/product.css">
     <title>Thai Fabric</title>
 </head>
 <body>
     <header>
         <nav>
-        <div class="logo">
-            <p>BoboYum</p>
-        </div>
-
+            <div class="logo">
+                <p>BoboYum</p>
+            </div>
             <div class="nav-links">
                 <a href="#">Home</a>
                 <a href="#">About Us</a>
@@ -23,9 +23,31 @@
     </header>
     <div class="main-content">
         <section class="hero">
-            <h1>ร้าน BoboYum</h1>
-            <p>Welcome to BoboYums, your premier destination for exquisite Thai fabrics. Discover the beauty and craftsmanship of our unique collection, perfect for your home.</p>
-            <button>Shop Now</button>
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img src="hero.jpg" alt="Image 1">
+                        <h1></h1>
+                        <p></p>
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="โปรโมชั่น.jpg" alt="Image 2">
+                        <h1></h1>
+                        <p></p>
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="path/to/your/image3.jpg" alt="Image 3">
+                        <h1>Craftsmanship at Its Best</h1>
+                        <p>Experience the finest quality of Thai fabrics, crafted with care and precision. Your satisfaction is our priority.</p>
+                        <button>Shop Now</button>
+                    </div>
+                </div>
+                <!-- Add Pagination -->
+                <div class="swiper-pagination"></div>
+                <!-- Add Navigation -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
         </section>
         <section class="products">
             <?php 
@@ -42,8 +64,6 @@
                         echo "<div class='product'>
                                 <img src='./image/{$row['image']}' alt='{$row['pro_name']}'>
                                 <h3>{$row['pro_name']}</h3>
-
-                                
                               </div>";
                         $product_count++; // Increment counter
                     }
@@ -59,5 +79,19 @@
     <footer>
         <p>&copy; 2024 Thai Fabric. All rights reserved.</p>
     </footer>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+      var swiper = new Swiper('.swiper-container', {
+        loop: true,
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+      });
+    </script>
 </body>
 </html>
