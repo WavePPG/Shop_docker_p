@@ -49,6 +49,10 @@
                 <div class="swiper-button-prev"></div>
             </div>
         </section>
+        <section id='test'>
+            <h1>Menu</h1>
+        </section>
+        
         <section class="products">
             <?php 
             include('server.php'); 
