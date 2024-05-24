@@ -117,7 +117,7 @@
 
 <script>
     function redirectToProducts() {
-        window.location.href = "product.php";
+        window.location.href = "edit.php";
     }
 
     document.addEventListener("DOMContentLoaded", function() {
