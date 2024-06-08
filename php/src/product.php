@@ -8,19 +8,10 @@
     <title>Thai Fabric</title>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">
-                <p>BoboYum</p>
-            </div>
-            <div class="nav-links">
-                <a href="#">Home</a>
-                <a href="#">About Us</a>
-                <a href="#">Products</a>
-                <a href="#">Contact</a>
-            </div>
-        </nav>
-    </header>
+    <nav>
+        <?php include('./front-end/navbar.php'); ?>
+    </nav>
+
     <div class="main-content">
         <section class="hero">
             <div class="swiper-container">
@@ -42,13 +33,12 @@
                         <button>Shop Now</button>
                     </div>
                 </div>
-                <!-- Add Pagination -->
                 <div class="swiper-pagination"></div>
-                <!-- Add Navigation -->
                 <div class="swiper-button-next"></div>
                 <div class="swiper-button-prev"></div>
             </div>
         </section>
+        
         <section id='test'>
             <h1>Menu</h1>
         </section>
@@ -60,17 +50,14 @@
             // Fetch and display data from the product table
             $sql_select = "SELECT * FROM product";
             $result_select = mysqli_query($conn, $sql_select);
-            $product_count = 0; // Initialize counter
 
             if (mysqli_num_rows($result_select) > 0) {
                 while($row = mysqli_fetch_assoc($result_select)) {
-                    if ($product_count < 4) { // Display maximum 4 products
-                        echo "<div class='product'>
-                                <img src='./image/{$row['image']}' alt='{$row['pro_name']}'>
-                                <h3>{$row['pro_name']}</h3>
-                              </div>";
-                        $product_count++; // Increment counter
-                    }
+                    echo "<div class='product'>
+                            <img src='./image/{$row['image']}' alt='{$row['pro_name']}'>
+                            <h3>{$row['pro_name']}</h3>
+                            <button class='add-to-cart' data-id='{$row['id']}' data-name='{$row['pro_name']}' data-image='./image/{$row['image']}'>Add to Cart</button>
+                          </div>";
                 }
             } else {
                 echo "<p>No products found.</p>";
@@ -80,22 +67,62 @@
             ?>
         </section>
     </div>
+
     <footer>
-        <p>&copy; 2024 Thai Fabric. All rights reserved.</p>
+        <?php include('./front-end/footer.php');?>
     </footer>
+    
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
-      var swiper = new Swiper('.swiper-container', {
-        loop: true,
-        pagination: {
-          el: '.swiper-pagination',
-          clickable: true,
-        },
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        },
-      });
+        var swiper = new Swiper('.swiper-container', {
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.add-to-cart');
+
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-id');
+                    const productName = this.getAttribute('data-name');
+                    const productImage = this.getAttribute('data-image');
+
+                    addToCart(productId, productName, productImage);
+                });
+            });
+        });
+
+        function addToCart(productId, productName, productImage) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const existingProduct = cart.find(product => product.id === productId);
+            if (existingProduct) {
+                existingProduct.quantity++;
+            } else {
+                cart.push({ id: productId, name: productName, image: productImage, quantity: 1 });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            console.log('Cart Updated:', cart);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartCount = document.getElementById('cart-count');
+            if (cartCount) {
+                cartCount.textContent = cart.reduce((total, product) => total + product.quantity, 0);
+            }
+        }
+
+        updateCartUI();
     </script>
 </body>
 </html>
