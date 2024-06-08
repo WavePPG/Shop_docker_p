@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+< lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,9 +14,6 @@
         }
 
         body {
-            max-width: 1600px;
-            margin: 0 auto; /* Center the container */
-            padding: 0 15px; /* Optional padding for spacing */
             font-family: Arial, sans-serif;
         }
 
@@ -38,8 +35,6 @@
 
         header .logo {
             flex: 1;
-            display: flex;
-            justify-content: center; /* Centering the logo */
         }
 
         header .logo p {
@@ -59,7 +54,6 @@
             color: #333;
             padding: 0 15px;
             font-size: 18px;
-            white-space: nowrap; /* Prevents text wrapping */
         }
 
         header .nav-links a:hover {
@@ -83,22 +77,91 @@
             color: #ff5722;
         }
 
-        header .extra-links a #cart-count {
+        #cart-count {
             position: absolute;
-            top: -10px;
+            top: -8px;
             right: -10px;
-            background-color: #ff5722;
-            color: #fff;
+            background: red;
+            color: white;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
+            padding: 2px 6px;
+            font-size: 12px;
         }
 
-        /* Ensure consistent padding and margin for body content */
+        .cart {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 450px;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 2000;
+        }
+
+        .cart.open {
+            right: 0;
+        }
+
+        .cart-header {
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-content {
+            padding: 20px;
+        }
+
+        .cart-item {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cart-item img {
+            max-width: 50px;
+            margin-right: 10px;
+        }
+
+        .cart-item-details {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        .cart-item h4 {
+            margin: 0;
+        }
+
+        .cart-item .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-item .quantity-controls button {
+            background: #ff5722;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .cart-footer {
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -108,22 +171,97 @@
                 <p>BoboYum</p>
             </div>
             <div class="nav-links">
-                <a href="../product.php">Home</a>
+                <a href="#">Home</a>
                 <a href="#">About Us</a>
                 <a href="#">Products</a>
                 <a href="#">Contact</a>
             </div>
             <div class="extra-links">
-                <a href="../front-end/basket.php" id="cart-icon">
-                    <i class="fas fa-shopping-cart"></i>
-                    <div id="cart-count">0</div>
-                </a>
+                <a href="#" id="cart-icon"><i class="fas fa-shopping-cart"></i><div id="cart-count">0</div></a>
                 <a href="#"><i class="fas fa-user"></i></a>
             </div>
         </nav>
     </header>
-    <main>
-        <!-- Page specific content goes here -->
-    </main>
+
+    <div class="cart" id="cart">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+        </div>
+        <div class="cart-content" id="cart-content">
+            <!-- Cart items will be displayed here -->
+        </div>
+        <div class="cart-footer">
+            <button type="button" class="btn btn-danger" onclick="closeCart()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('cart-icon').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent the default link action
+            document.getElementById('cart').classList.toggle('open');
+        });
+
+        function closeCart() {
+            document.getElementById('cart').classList.remove('open');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            function updateCartUI() {
+                const cartContent = document.getElementById('cart-content');
+                cartContent.innerHTML = ''; // Clear previous content
+                cart.forEach((item, index) => {
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+                    cartItem.innerHTML = `
+                        <div class="cart-item-details">
+                            <img src="${item.image}" alt="${item.name}">
+                            <h4>${item.name}</h4>
+                            <div class="quantity-controls">
+                                <button onclick="updateQuantity(${index}, -1)">-</button>
+                                <span>${item.quantity}</span>
+                                <button onclick="updateQuantity(${index}, 1)">+</button>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${index})">Remove</button>
+                    `;
+                    cartContent.appendChild(cartItem);
+                });
+
+                const cartCount = document.getElementById('cart-count');
+                cartCount.textContent = cart.reduce((total, product) => total + product.quantity, 0);
+            }
+
+            window.addToCart = function(productId, productName, productImage) {
+                const existingProduct = cart.find(product => product.id === productId);
+                if (existingProduct) {
+                    existingProduct.quantity++;
+                } else {
+                    cart.push({ id: productId, name: productName, image: productImage, quantity: 1 });
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartUI();
+            };
+
+            window.updateQuantity = function(index, change) {
+                if (cart[index].quantity + change > 0) {
+                    cart[index].quantity += change;
+                } else {
+                    cart.splice(index, 1);
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartUI();
+            };
+
+            window.removeFromCart = function(index) {
+                cart.splice(index, 1);
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartUI();
+            };
+
+            updateCartUI();
+        });
+    </script>
 </body>
 </html>

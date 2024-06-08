@@ -18,19 +18,19 @@
                 <div class="swiper-wrapper">
                     <div class="swiper-slide">
                         <img src="hero.jpg" alt="Image 1">
-                        <h1></h1>
-                        <p></p>
+                        <h1>Welcome to Thai Fabric</h1>
+                        <p>Discover the exquisite beauty of Thai textiles.</p>
                     </div>
                     <div class="swiper-slide">
                         <img src="โปรโมชั่น.jpg" alt="Image 2">
-                        <h1></h1>
-                        <p></p>
+                        <h1>Special Promotion</h1>
+                        <p>Don't miss our exclusive offers and discounts!</p>
                     </div>
                     <div class="swiper-slide">
                         <img src="path/to/your/image3.jpg" alt="Image 3">
                         <h1>Craftsmanship at Its Best</h1>
                         <p>Experience the finest quality of Thai fabrics, crafted with care and precision. Your satisfaction is our priority.</p>
-                        <button>Shop Now</button>
+                        <button onclick="window.location.href='shop.php'">Shop Now</button>
                     </div>
                 </div>
                 <div class="swiper-pagination"></div>
@@ -39,7 +39,7 @@
             </div>
         </section>
         
-        <section id='test'>
+        <section id="test">
             <h1>Menu</h1>
         </section>
         
@@ -53,10 +53,12 @@
 
             if (mysqli_num_rows($result_select) > 0) {
                 while($row = mysqli_fetch_assoc($result_select)) {
+                    // Use full URL path for images
+                    $imagePath = './image/' . $row['image'];
                     echo "<div class='product'>
-                            <img src='./image/{$row['image']}' alt='{$row['pro_name']}'>
+                            <img src='{$imagePath}' alt='{$row['pro_name']}'>
                             <h3>{$row['pro_name']}</h3>
-                            <button class='add-to-cart' data-id='{$row['id']}' data-name='{$row['pro_name']}' data-image='./image/{$row['image']}'>Add to Cart</button>
+                            <button class='add-to-cart' data-id='{$row['id']}' data-name='{$row['pro_name']}' data-image='{$imagePath}'>Add to Cart</button>
                           </div>";
                 }
             } else {
@@ -69,23 +71,22 @@
     </div>
 
     <footer>
-        <?php include('./front-end/footer.php');?>
+        <?php include('./front-end/footer.php'); ?>
     </footer>
     
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
-        var swiper = new Swiper('.swiper-container', {
-            loop: true,
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-            },
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
+        document.addEventListener('DOMContentLoaded', function () {
+            const buttons = document.querySelectorAll('.add-to-cart');
+            buttons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const productId = this.getAttribute('data-id');
+                    const productName = this.getAttribute('data-name');
+                    const productImage = this.getAttribute('data-image');
+                    addToCart(productId, productName, productImage);
+                });
+            });
         });
     </script>
-
 </body>
 </html>

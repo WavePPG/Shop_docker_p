@@ -1,37 +1,80 @@
 <?php
 session_start();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $productId = $_POST['product_id'];
+    $productName = $_POST['product_name'];
+    $productImage = $_POST['product_image'];
+
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
+    }
+
+    if (!isset($_SESSION['cart'][$productId])) {
+        $_SESSION['cart'][$productId] = [
+            'name' => $productName,
+            'image' => $productImage,
+            'quantity' => 1,
+        ];
+    } else {
+        $_SESSION['cart'][$productId]['quantity'] += 1;
+    }
+
+    echo json_encode(['success' => true]);
+    exit();
+}
 ?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/basket.css">
     <title>Basket</title>
+    <style>
+        .cart-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .cart-item img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        .placeholder {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+            background-color: #ccc;
+            display: inline-block;
+            text-align: center;
+            line-height: 50px;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
-    <nav>
-        <?php include('navbar.php'); ?>
-    </nav>
-    
-    <div class="main-content">
-        <h1>Your Basket</h1>
+    <h1>Your Cart</h1>
+    <ul>
         <?php
-        if(isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
-            foreach($_SESSION['cart'] as $product) {
-                echo "<div class='product'>
-                        <img src='{$product['image']}' alt='{$product['name']}'>
-                        <h3>{$product['name']}</h3>
-                      </div>";
-            }
-        } else {
-            echo "<p>Your basket is empty.</p>";
-        }
+        $cart = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
+        $total = 0;
+        foreach ($cart as $id => $product):
+            $total += $product['quantity'];
+            $imagePath = $_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($product['image'], '/'); // Ensure the path is correct
         ?>
-    </div>
-    
-    <footer>
-        <?php include('.footer.php'); ?>
-    </footer>
+            <li class="cart-item">
+                <?php if (file_exists($imagePath)): ?>
+                    <img src="<?php echo $product['image']; ?>" alt="<?php echo $product['name']; ?>">
+                <?php else: ?>
+                    <div class="placeholder">N/A</div>
+                    <!-- Debugging: show image path -->
+                    <div><?php echo htmlspecialchars($imagePath); ?></div>
+                <?php endif; ?>
+                <?php echo $product['name']; ?> - Quantity: <?php echo $product['quantity']; ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+    <h2>Total Items: <?php echo $total; ?></h2>
+    <a href="product.php">Continue Shopping</a>
 </body>
 </html>
