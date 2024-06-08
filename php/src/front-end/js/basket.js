@@ -18,15 +18,15 @@ document.addEventListener('DOMContentLoaded', function () {
             cartItem.className = 'cart-item';
             cartItem.innerHTML = `
                 <div class="cart-item-details">
-                    <img src="./image/${item.image}" alt="${item.name}">
+                    <img src="${item.image}" alt="${item.name}">
                     <h4>${item.name}</h4>
                     <div class="quantity-controls">
-                        <button class="btn btn-custom" onclick="updateQuantity(${index}, -1)">-</button>
+                        <button onclick="updateQuantity(${index}, -1)">-</button>
                         <span>${item.quantity}</span>
-                        <button class="btn btn-custom" onclick="updateQuantity(${index}, 1)">+</button>
+                        <button onclick="updateQuantity(${index}, 1)">+</button>
                     </div>
                 </div>
-                <button class="btn btn-custom-remove" onclick="removeFromCart(${index})">Remove</button>
+                <button onclick="removeFromCart(${index})">Remove</button>
             `;
             cartContent.appendChild(cartItem);
         });

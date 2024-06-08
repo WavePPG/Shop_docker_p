@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="./css/product.css">
+    <link rel="stylesheet" href="./css/product_f.css">
+    <!-- Include FontAwesome for the cart icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Thai Fabric</title>
 </head>
 <body>
@@ -58,7 +60,13 @@
                     echo "<div class='product'>
                             <img src='{$imagePath}' alt='{$row['pro_name']}'>
                             <h3>{$row['pro_name']}</h3>
-                            <button class='add-to-cart' data-id='{$row['id']}' data-name='{$row['pro_name']}' data-image='{$imagePath}'>Add to Cart</button>
+                            <div class='price-amount'>
+                                <p>Price: {$row['price']}</p>
+                                <p>Amount: {$row['amount']}</p>
+                            </div>
+                            <button class='add-to-cart' data-id='{$row['id']}' data-name='{$row['pro_name']}' data-image='{$imagePath}' data-price='{$row['price']}' data-amount='{$row['amount']}'>
+                                <i class='fas fa-shopping-cart'></i> Add to Cart
+                            </button>
                           </div>";
                 }
             } else {
@@ -79,14 +87,28 @@
         document.addEventListener('DOMContentLoaded', function () {
             const buttons = document.querySelectorAll('.add-to-cart');
             buttons.forEach(button => {
+                // Remove existing event listeners to avoid duplication
+                button.replaceWith(button.cloneNode(true));
+            });
+
+            // Reassign event listeners
+            document.querySelectorAll('.add-to-cart').forEach(button => {
                 button.addEventListener('click', function () {
                     const productId = this.getAttribute('data-id');
                     const productName = this.getAttribute('data-name');
                     const productImage = this.getAttribute('data-image');
-                    addToCart(productId, productName, productImage);
+                    const productPrice = this.getAttribute('data-price');
+                    const productAmount = this.getAttribute('data-amount');
+                    addToCart(productId, productName, productImage, productPrice, productAmount);
                 });
             });
         });
+
+        function addToCart(id, name, image, price, amount) {
+            // Implement your add to cart functionality here
+            console.log(`Added to cart: ${name}`);
+        }
     </script>
+    <script src="./front-end/js/animation.js"></script>
 </body>
 </html>
