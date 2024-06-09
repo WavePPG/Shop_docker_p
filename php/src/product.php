@@ -49,12 +49,21 @@
             <?php 
             include('server.php'); 
 
+            // Define the maximum number of products per batch
+            $maxProductsPerBatch = 10;
+            $productCount = 0;
+
             // Fetch and display data from the product table
-            $sql_select = "SELECT * FROM product";
+            $sql_select = "SELECT * FROM product ORDER BY id";
             $result_select = mysqli_query($conn, $sql_select);
 
             if (mysqli_num_rows($result_select) > 0) {
                 while($row = mysqli_fetch_assoc($result_select)) {
+                    if ($productCount % $maxProductsPerBatch == 0 && $productCount != 0) {
+                        echo "<div class='batch-separator'></div>"; // Optional separator between batches
+                    }
+                    $productCount++;
+
                     // Use full URL path for images
                     $imagePath = './image/' . $row['image'];
                     echo "<div class='product'>
@@ -67,7 +76,7 @@
                             <button class='add-to-cart' data-id='{$row['id']}' data-name='{$row['pro_name']}' data-image='{$imagePath}' data-price='{$row['price']}' data-amount='{$row['amount']}'>
                                 <i class='fas fa-shopping-cart'></i> Add to Cart
                             </button>
-                          </div>";
+                        </div>";
                 }
             } else {
                 echo "<p>No products found.</p>";
@@ -76,6 +85,7 @@
             mysqli_close($conn);
             ?>
         </section>
+
     </div>
 
     <footer>
