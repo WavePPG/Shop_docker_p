@@ -86,13 +86,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const buttons = document.querySelectorAll('.add-to-cart');
-            buttons.forEach(button => {
-                // Remove existing event listeners to avoid duplication
-                button.replaceWith(button.cloneNode(true));
-            });
 
-            // Reassign event listeners
-            document.querySelectorAll('.add-to-cart').forEach(button => {
+            buttons.forEach(button => {
                 button.addEventListener('click', function () {
                     const productId = this.getAttribute('data-id');
                     const productName = this.getAttribute('data-name');

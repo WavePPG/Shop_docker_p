@@ -63,7 +63,6 @@
             font-size: 18px;
             padding: 8px 40px;
             transition: color 0.3s ease;
-        
         }
 
         .nav-links a:hover {
@@ -79,7 +78,6 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
-          
         }
     </style>
 </head>
@@ -92,6 +90,7 @@
             <ul class="nav-links">
                 <li><a href="uploadproduct.php">Add Product</a></li>
                 <li><a href="../edit-delete/edit.php">Edit</a></li>
+                <li><a href="logout.php" style="color: red;">Logout</a></li> <!-- Added Logout Button -->
             </ul>
         </nav>
     </header>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-< lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -91,13 +91,13 @@
         .cart {
             position: fixed;
             top: 0;
-            right: -100%;
+            right: -450px; /* Adjusted to fully hide the cart off-screen */
             width: 450px;
             height: 100%;
             background-color: #fff;
             box-shadow: -2px 0 5px rgba(0,0,0,0.5);
             overflow-y: auto;
-            transition: right 0.3s ease;
+            transition: right 0.3s ease-in-out; /* Smooth transition effect */
             z-index: 2000;
         }
 
@@ -162,22 +162,6 @@
             display: flex;
             justify-content: center;
         }
-        .cart {
-    position: fixed;
-    top: 0;
-    right: -450px; /* Adjusted to fully hide the cart off-screen */
-    width: 450px;
-    height: 100%;
-    background-color: #fff;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
-    overflow-y: auto;
-    transition: right 0.3s ease-in-out; /* Smooth transition effect */
-    z-index: 2000;
-}
-
-.cart.open {
-    right: 0;
-}
 
     </style>
 </head>
@@ -191,7 +175,7 @@
                 <a href="#">Home</a>
                 <a href="#">About Us</a>
                 <a href="#">Products</a>
-                <a href="">Contact</a>
+                <a href="#">Contact</a>
             </div>
             <div class="extra-links">
                 <a href="#" id="cart-icon"><i class="fas fa-shopping-cart"></i><div id="cart-count">0</div></a>
@@ -265,7 +249,7 @@
             if (cart[index].quantity + change > 0) {
                 cart[index].quantity += change;
             } else {
-                    cart.splice(index, 1);
+                cart.splice(index, 1);
             }
             localStorage.setItem('cart', JSON.stringify(cart));
             updateCartUI();
