@@ -57,6 +57,7 @@
                 <!-- <li><a href="../product.php">Product</a></li> -->
                 <li><a href="../back-end/uploadproduct.php">AddProduct</a></li>
                 <li><a href="edit.php">Edit</a></li>
+                <li><a href="../back-end/logout.php" style="color: red;">Logout</a></li> <!-- Added Logout Button -->
             </ul>
             </div>
         </div>

@@ -9,7 +9,35 @@ if (!isset($_SESSION['admin_logged_in'])) {
     exit();
 }
 
-// The rest of your code goes here
+// Handle form submission for editing a product
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_product'])) {
+    include('../server.php');
+    $id = $_POST['id'];
+    $pro_name = $_POST['pro_name'];
+    $pro_description = $_POST['pro_description'];
+    $price = $_POST['price'];
+    $amount = $_POST['amount'];
+
+    // Handle file upload if a new image is uploaded
+    if ($_FILES['image']['name']) {
+        $target_dir = "../image/";
+        $target_file = $target_dir . basename($_FILES['image']['name']);
+        move_uploaded_file($_FILES['image']['tmp_name'], $target_file);
+        $image = $_FILES['image']['name'];
+        $sql_update = "UPDATE product SET pro_name='$pro_name', pro_description='$pro_description', price='$price', amount='$amount', image='$image' WHERE id='$id'";
+    } else {
+        $sql_update = "UPDATE product SET pro_name='$pro_name', pro_description='$pro_description', price='$price', amount='$amount' WHERE id='$id'";
+    }
+
+    if (mysqli_query($conn, $sql_update)) {
+        echo "success";
+    } else {
+        echo "Error: " . $sql_update . "<br>" . mysqli_error($conn);
+    }
+
+    mysqli_close($conn);
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -124,6 +152,7 @@ if (!isset($_SESSION['admin_logged_in'])) {
             <ul class="nav-links">
                 <li><a href="../back-end/uploadproduct.php">Add Product</a></li>
                 <li><a href="../edit-delete/edit.php">Edit</a></li>
+                <li><a href="../back-end/logout.php" style="color: red;">Logout</a></li> <!-- Added Logout Button -->
             </ul>
         </nav>
     </header>
@@ -143,7 +172,6 @@ if (!isset($_SESSION['admin_logged_in'])) {
                 <tbody>
                     <?php 
                     include('../server.php'); 
-                    include('update_product.php');
                     $sql_select = "SELECT * FROM product";
                     $result_select = mysqli_query($conn, $sql_select);
 
@@ -171,8 +199,9 @@ if (!isset($_SESSION['admin_logged_in'])) {
                                                 </button>
                                             </div>
                                             <div class='modal-body'>
-                                                <form action='update_product.php' method='POST' enctype='multipart/form-data'>
+                                                <form id='editForm{$row['id']}' method='POST' enctype='multipart/form-data'>
                                                     <input type='hidden' name='id' value='{$row['id']}'>
+                                                    <input type='hidden' name='edit_product' value='1'>
                                                     <div class='form-group'>
                                                         <label for='pro_name'>Product Name</label>
                                                         <input type='text' class='form-control' id='pro_name' name='pro_name' value='{$row['pro_name']}' required>
@@ -238,6 +267,31 @@ if (!isset($_SESSION['admin_logged_in'])) {
                 });
             }
         }
+
+        // AJAX form submission for editing a product
+        $(document).ready(function() {
+            $('form[id^="editForm"]').on('submit', function(event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: 'edit.php',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.trim() === 'success') {
+                            location.reload();
+                        } else {
+                            alert('Error editing product: ' + response);
+                        }
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        alert('Error editing product: ' + thrownError);
+                    }
+                });
+            });
+        });
     </script>
 
 </body>
