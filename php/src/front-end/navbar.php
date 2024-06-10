@@ -1,3 +1,12 @@
+<?php
+session_start();
+$cart_count = 0;
+if (isset($_SESSION['cart'])) {
+    foreach ($_SESSION['cart'] as $product) {
+        $cart_count += $product['quantity'];
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -88,83 +97,6 @@
         padding: 2px 6px;
         font-size: 12px;
     }
-
-    .cart {
-        position: fixed;
-        top: 0;
-        right: -450px;
-        /* Adjusted to fully hide the cart off-screen */
-        width: 450px;
-        height: 100%;
-        background-color: #fff;
-        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
-        overflow-y: auto;
-        transition: right 0.3s ease-in-out;
-        /* Smooth transition effect */
-        z-index: 2000;
-    }
-
-    .cart.open {
-        right: 0;
-    }
-
-    .cart-header {
-        padding: 20px;
-        background-color: #f5f5f5;
-        border-bottom: 1px solid #ddd;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .cart-content {
-        padding: 20px;
-    }
-
-    .cart-item {
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .cart-item img {
-        max-width: 50px;
-        margin-right: 10px;
-    }
-
-    .cart-item-details {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-grow: 1;
-    }
-
-    .cart-item h4 {
-        margin: 0;
-    }
-
-    .cart-item .quantity-controls {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .cart-item .quantity-controls button {
-        background: #ff5722;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-    }
-
-    .cart-footer {
-        padding: 20px;
-        background-color: #f5f5f5;
-        border-top: 1px solid #ddd;
-        display: flex;
-        justify-content: center;
-    }
     </style>
 </head>
 
@@ -175,33 +107,19 @@
                 <p>BoboYum</p>
             </div>
             <div class="nav-links">
-                <a href="#">Home</a>
-                <a href="#">About Us</a>
-                <a href="#">Products</a>
-                <a href="#">Contact</a>
+                <a href="/product.php">Home</a>
+                <a href="/about.php">About Us</a>
+                <a href="/products.php">Products</a>
+                <a href="/contact.php">Contact</a>
             </div>
             <div class="extra-links">
-                <a href="#" id="cart-icon"><i class="fas fa-shopping-cart"></i>
-                    <div id="cart-count">0</div>
+                <a href="/cart.php" id="cart-icon"><i class="fas fa-shopping-cart"></i>
+                    <div id="cart-count"><?php echo $cart_count; ?></div>
                 </a>
-                <a href="#"><i class="fas fa-user"></i></a>
+                <a href="/profile.php"><i class="fas fa-user"></i></a>
             </div>
         </nav>
     </header>
-
-    <div class="cart" id="cart">
-        <div class="cart-header">
-            <h2>Your Cart</h2>
-        </div>
-        <div class="cart-content" id="cart-content">
-            <!-- Cart items will be displayed here -->
-        </div>
-        <div class="cart-footer">
-            <button type="button" class="btn btn-danger" onclick="closeCart()">Close</button>
-        </div>
-    </div>
-
-
 </body>
 
 </html>
