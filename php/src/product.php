@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,111 +10,39 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Thai Fabric</title>
 </head>
+
 <body>
     <nav>
         <?php include('./front-end/navbar.php'); ?>
     </nav>
 
-    <div class="main-content">
-        <section class="hero">
-            <div class="swiper-container">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <img src="hero.jpg" alt="Image 1">
-                        <h1>Welcome to Thai Fabric</h1>
-                        <p>Discover the exquisite beauty of Thai textiles.</p>
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="โปรโมชั่น.jpg" alt="Image 2">
-                        <h1>Special Promotion</h1>
-                        <p>Don't miss our exclusive offers and discounts!</p>
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="path/to/your/image3.jpg" alt="Image 3">
-                        <h1>Craftsmanship at Its Best</h1>
-                        <p>Experience the finest quality of Thai fabrics, crafted with care and precision. Your satisfaction is our priority.</p>
-                        <button onclick="window.location.href='shop.php'">Shop Now</button>
-                    </div>
-                </div>
-                <div class="swiper-pagination"></div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-            </div>
-        </section>
+    <div class="product-container">
+        <?php 
+        include('server.php'); 
         
-        <section id="test">
-            <h1>Menu</h1>
-        </section>
+        // คิวรี่ข้อมูลจากฐานข้อมูล
+        $query = "SELECT * FROM product";
+        $result = mysqli_query($conn, $query);
         
-        <section class="products">
-            <?php 
-            include('server.php'); 
-
-            // Define the maximum number of products per batch
-            $maxProductsPerBatch = 10;
-            $productCount = 0;
-
-            // Fetch and display data from the product table
-            $sql_select = "SELECT * FROM product ORDER BY id";
-            $result_select = mysqli_query($conn, $sql_select);
-
-            if (mysqli_num_rows($result_select) > 0) {
-                while($row = mysqli_fetch_assoc($result_select)) {
-                    if ($productCount % $maxProductsPerBatch == 0 && $productCount != 0) {
-                        echo "<div class='batch-separator'></div>"; // Optional separator between batches
-                    }
-                    $productCount++;
-
-                    // Use full URL path for images
-                    $imagePath = './image/' . $row['image'];
-                    echo "<div class='product'>
-                            <img src='{$imagePath}' alt='{$row['pro_name']}'>
-                            <h3>{$row['pro_name']}</h3>
-                            <div class='price-amount'>
-                                <p>Price: {$row['price']}</p>
-                                <p>Amount: {$row['amount']}</p>
-                            </div>
-                            <button class='add-to-cart' data-id='{$row['id']}' data-name='{$row['pro_name']}' data-image='{$imagePath}' data-price='{$row['price']}' data-amount='{$row['amount']}'>
-                                <i class='fas fa-shopping-cart'></i> Add to Cart
-                            </button>
-                        </div>";
-                }
-            } else {
-                echo "<p>No products found.</p>";
-            }
-
-            mysqli_close($conn);
-            ?>
-        </section>
-
+        while($row = mysqli_fetch_assoc($result)) {
+            $imagePath = './image/' . $row['image'];
+            echo '<div class="product">';
+            echo '<img src="'.$imagePath.'" alt="'.$row['pro_name'].'">';
+            echo '<h2>'.$row['pro_name'].'</h2>';
+            echo '<p>Price: '.$row['price'].'</p>';
+            echo '<p>Amount: '.$row['amount'].'</p>';
+            echo '<form action="add_to_cart.php" method="post">';
+            echo '<input type="hidden" name="product_id" value="'.$row['id'].'">';
+            echo '<button type="submit" class="add-to-cart-btn">ADD to cart</button>';
+            echo '</form>';
+            echo '</div>';
+        }
+        ?>
     </div>
 
     <footer>
         <?php include('./front-end/footer.php'); ?>
     </footer>
-    
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const buttons = document.querySelectorAll('.add-to-cart');
-
-            buttons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const productId = this.getAttribute('data-id');
-                    const productName = this.getAttribute('data-name');
-                    const productImage = this.getAttribute('data-image');
-                    const productPrice = this.getAttribute('data-price');
-                    const productAmount = this.getAttribute('data-amount');
-                    addToCart(productId, productName, productImage, productPrice, productAmount);
-                });
-            });
-        });
-
-        function addToCart(id, name, image, price, amount) {
-            // Implement your add to cart functionality here
-            console.log(`Added to cart: ${name}`);
-        }
-    </script>
-    <script src="./front-end/js/animation.js"></script>
 </body>
+
 </html>
