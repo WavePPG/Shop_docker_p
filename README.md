@@ -5,4 +5,3 @@ http://localhost:8083/back-end/login.php [Back-end] <br>
 Admin <br>
 Username : admin <br>
 Password : 123456 <br>
-Password : 123456 <br>
