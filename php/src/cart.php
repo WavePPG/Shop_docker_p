@@ -1,6 +1,11 @@
 <?php
 session_start();
 
+if (!isset($_SESSION['user_id'])) {
+    header("Location: /front-end/login.php");
+    exit();
+}
+
 // ฟังก์ชันลบสินค้าออกจากตะกร้า
 if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['product_id'])) {
     $product_id = $_POST['product_id'];
@@ -36,95 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/cart.css">
     <title>Cart - Thai Fabric</title>
-    <style>
-    body {
-        background-color: #fff;
-
-    }
-
-    .cart-container {
-        margin-top: 50px;
-    }
-
-    .cart-header,
-    .cart-total {
-        background-color: #f8f9fa;
-        padding: 15px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-    }
-
-    .cart-item {
-        display: flex;
-        align-items: center;
-        padding: 15px 0;
-        border-bottom: 1px solid #dee2e6;
-    }
-
-    .cart-item:last-child {
-        border-bottom: none;
-    }
-
-    .cart-item img {
-        width: 100px;
-        margin-right: 20px;
-    }
-
-    .cart-item h2 {
-        font-size: 1.25rem;
-    }
-
-    .cart-item p {
-        margin: 0;
-    }
-
-    .cart-item .quantity {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .cart-item .quantity button {
-        margin: 0 5px;
-        background-color: transparent;
-        border: none;
-        font-size: 1.25rem;
-    }
-
-    .cart-item .quantity button:hover {
-        color: #007bff;
-    }
-
-    .cart-item .btn {
-        margin-left: 10px;
-    }
-
-    .checkout-button {
-        margin-top: 20px;
-    }
-
-    .coupon {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .coupon input {
-        flex: 1;
-        margin-right: 10px;
-    }
-
-    .cart-total-container {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 20px;
-    }
-
-    .cart-total {
-        width: 300px;
-    }
-    </style>
 </head>
 
 <body>
@@ -173,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo '<p>Subtotal: '.$total.'</p>';
             echo '<p>Shipping: Free</p>';
             echo '<p>Total: '.$total.'</p>';
-            echo '<a href="checkout.php" class="btn btn-danger btn-block">Proceed to Checkout</a>';
+            echo '<a href="generate_qrcode.php?amount='.$total.'" class="btn btn-danger btn-block">Proceed to Checkout</a>';
             echo '</div>';
             echo '</div>';
         } else {

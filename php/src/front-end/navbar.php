@@ -116,7 +116,7 @@ if (isset($_SESSION['cart'])) {
                 <a href="/cart.php" id="cart-icon"><i class="fas fa-shopping-cart"></i>
                     <div id="cart-count"><?php echo $cart_count; ?></div>
                 </a>
-                <a href="/profile.php"><i class="fas fa-user"></i></a>
+                <a href="/front-end/profile.php"><i class="fas fa-user"></i></a>
             </div>
         </nav>
     </header>
